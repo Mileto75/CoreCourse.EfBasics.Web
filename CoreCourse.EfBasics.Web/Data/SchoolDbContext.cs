@@ -17,6 +17,26 @@ namespace CoreCourse.EfBasics.Web.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //teacher configuration
+            modelBuilder.Entity<Teacher>()
+                .Property(t => t.Firstname).IsRequired();
+            modelBuilder.Entity<Teacher>()
+                .Property(t => t.Lastname).IsRequired();
+            //students
+            modelBuilder.Entity<Student>()
+                .Property(s => s.Firstname)
+                .IsRequired()
+                .HasMaxLength(50);
+            modelBuilder.Entity<Student>()
+             .Property(s => s.Lastname)
+             .IsRequired()
+             .HasMaxLength(50);
+            //courses
+            modelBuilder.Entity<Course>()
+                .Property(c => c.Name)
+                .IsRequired()
+                .HasMaxLength(120);
+
             base.OnModelCreating(modelBuilder);
         }
     }

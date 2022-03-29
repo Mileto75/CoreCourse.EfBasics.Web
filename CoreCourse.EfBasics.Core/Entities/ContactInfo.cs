@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace CoreCourse.EfBasics.Core.Entities
 {
-    public class Department
+    public class ContactInfo
     {
         public int Id { get; set; }
-       
-        public string Name { get; set; }
-        public ICollection<Teacher> Teachers { get; set; }//one department has many teachers
+        public string Phone { get; set; }
+        
+        public string Email { get; set; }
+        public int? TeacherId { get; set; }//unshadow property
+        public Teacher Teacher { get; set; }//navigation property
     }
 }
