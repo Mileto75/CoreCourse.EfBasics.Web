@@ -1,0 +1,20 @@
+﻿@model CoursesIndexViewModel
+
+<h1>Courses</h1>
+<div class="row>">
+    
+        <table class="table table-responsive table-hover">
+            <tr>
+                <th>Title</th>
+            </tr>
+            @foreach (var course in Model.Courses)
+            {
+                <tr>
+                    <td>@course</td>
+                </tr>
+            }
+        </table>
+    
+</div>
+
+
