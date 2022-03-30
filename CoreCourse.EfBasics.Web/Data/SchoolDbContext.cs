@@ -1,4 +1,5 @@
 ﻿using CoreCourse.EfBasics.Core.Entities;
+using CoreCourse.EfBasics.Web.Data.Seeding;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreCourse.EfBasics.Web.Data
@@ -10,6 +11,7 @@ namespace CoreCourse.EfBasics.Web.Data
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<ContactInfo> ContactInfos { get; set; }
 
         public SchoolDbContext(DbContextOptions<SchoolDbContext> options) : base(options)
         {
@@ -36,7 +38,8 @@ namespace CoreCourse.EfBasics.Web.Data
                 .Property(c => c.Name)
                 .IsRequired()
                 .HasMaxLength(120);
-
+            //seed the data
+            Seeder.Seed(modelBuilder);
             base.OnModelCreating(modelBuilder);
         }
     }
