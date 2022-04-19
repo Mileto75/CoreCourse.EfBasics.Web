@@ -1,5 +1,6 @@
 ﻿using CoreCourse.EfBasics.Core.Entities;
 using CoreCourse.EfBasics.Web.Data;
+using CoreCourse.EfBasics.Web.Models;
 using CoreCourse.EfBasics.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -91,20 +92,74 @@ namespace CoreCourse.EfBasics.Web.Controllers
         {
             //get the the teachers from the database
             var teachers = await _schoolDbContext.Teachers.ToListAsync();
+            //get the students
+            var students = await _schoolDbContext.Students.ToListAsync();
             //viewmodel
+            //create the teacher dropdown
             CoursesAddViewModel coursesAddViewModel = new();
             coursesAddViewModel.Teachers = teachers.Select(t =>  new SelectListItem
             {
                 Text = $"{t.Firstname} {t.Lastname}",
                 Value = t.Id.ToString()
             });
+            //create the students checkboxes
+            coursesAddViewModel.Students = students.Select(s => new CheckboxModel 
+            { 
+                Value = s.Id,
+                Text = $"{s.Firstname} {s.Lastname}"
+            }).ToList();
             return View(coursesAddViewModel);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Add(CoursesAddViewModel coursesAddViewModel)
         {
-            return View();
+            //validate the data
+            if(!ModelState.IsValid)//validation error
+            {
+                //repopulate the teachers list
+                var teachers = await _schoolDbContext.Teachers.ToListAsync();
+                coursesAddViewModel.Teachers = teachers.Select(t => new SelectListItem
+                {
+                    Text = $"{t.Firstname} {t.Lastname}",
+                    Value = t.Id.ToString()
+                });
+                return View(coursesAddViewModel);
+            }
+            //store in database
+            //create a new entity
+            var newCourse = new Course();
+            newCourse.Name = coursesAddViewModel.Title;
+            //add teacherId
+            newCourse.TeacherId = coursesAddViewModel?.TeacherId;
+            //add students
+            //get the selected students and generate a list of int
+            var selectedStudents = coursesAddViewModel.Students
+                .Where(s => s.IsSelected == true).Select(s => s.Value);
+            //get the students from the database
+            //filter the students based on selected students using contains
+            newCourse.Students = await _schoolDbContext
+                .Students
+                .Where(st => selectedStudents.Contains(st.Id)).ToListAsync();
+            
+            //add to the database context
+            await _schoolDbContext.Courses.AddAsync(newCourse);
+            //save to the database
+            try 
+            {
+                await _schoolDbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex) 
+            { 
+                //in production log the error
+                Console.WriteLine(ex.Message);
+                //fill modelstate with custom error
+                ModelState.AddModelError("", "Something went wrong...");
+                return View(coursesAddViewModel);
+            }
+            
+            //redirect to index
+            return RedirectToAction("index");
         }
 
 
