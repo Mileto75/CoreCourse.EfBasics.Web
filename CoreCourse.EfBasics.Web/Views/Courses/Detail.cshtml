@@ -1,0 +1,27 @@
+﻿@model CoursesDetailViewModel
+@{
+    ViewData["Title"] = "Detail";
+}
+
+<div class="row">
+    <div class="col col-6 mx-auto border-dark m-3">
+        <div class="card" style="width: 18rem;">
+            <!--tips: add .text-center,.text-right to the .card to change card text alignment-->
+            <div class="card-body">
+                <h5 class="card-title">@Model.Name</h5>
+                <h6 class="card-subtitle mb-2 text-muted">@Model.Teacher</h6>
+                <p class="card-text">
+                    @foreach(var student in Model.Students)
+                    { 
+                        <strong>@student</strong>
+                    }
+                </p>
+                
+                <a asp-controller="Courses"
+                   asp-action="Index" class="btn btn-primary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
