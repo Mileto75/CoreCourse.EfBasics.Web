@@ -2,6 +2,7 @@
 using CoreCourse.EfBasics.Web.Data;
 using CoreCourse.EfBasics.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace CoreCourse.EfBasics.Web.Controllers
             return View(coursesDetailViewModel);
         }
         [HttpGet]
-        public async Task<IActionResult> Add()
+        public async Task<IActionResult> AddTest()
         {
             
             //follows oop principles
@@ -84,5 +85,28 @@ namespace CoreCourse.EfBasics.Web.Controllers
             
             return Content("Added");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Add()
+        {
+            //get the the teachers from the database
+            var teachers = await _schoolDbContext.Teachers.ToListAsync();
+            //viewmodel
+            CoursesAddViewModel coursesAddViewModel = new();
+            coursesAddViewModel.Teachers = teachers.Select(t =>  new SelectListItem
+            {
+                Text = $"{t.Firstname} {t.Lastname}",
+                Value = t.Id.ToString()
+            });
+            return View(coursesAddViewModel);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(CoursesAddViewModel coursesAddViewModel)
+        {
+            return View();
+        }
+
+
     }
 }
