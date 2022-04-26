@@ -1,4 +1,6 @@
 using CoreCourse.EfBasics.Web.Data;
+using CoreCourse.EfBasics.Web.Services;
+using CoreCourse.EfBasics.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +30,9 @@ namespace CoreCourse.EfBasics.Web
             //register database context
             services.AddDbContext<SchoolDbContext>(options
                 => options.UseSqlServer(Configuration.GetConnectionString("SchoolDb")));
+            //register own services
+            services.AddScoped<IFormHelperService, FormHelperService>();
+            
             services.AddControllersWithViews();
         }
 

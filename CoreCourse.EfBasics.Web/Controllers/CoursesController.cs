@@ -1,6 +1,7 @@
 ﻿using CoreCourse.EfBasics.Core.Entities;
 using CoreCourse.EfBasics.Web.Data;
 using CoreCourse.EfBasics.Web.Models;
+using CoreCourse.EfBasics.Web.Services.Interfaces;
 using CoreCourse.EfBasics.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -14,11 +15,14 @@ namespace CoreCourse.EfBasics.Web.Controllers
     public class CoursesController : Controller
     {
         private readonly SchoolDbContext _schoolDbContext;
+        private readonly IFormHelperService _formHelperService;
 
-        public CoursesController(SchoolDbContext schoolDbContext)
+        public CoursesController(SchoolDbContext schoolDbContext,
+            IFormHelperService formHelperService)
         {
             //constructor injection
             _schoolDbContext = schoolDbContext;
+            _formHelperService = formHelperService;
         }
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -92,22 +96,13 @@ namespace CoreCourse.EfBasics.Web.Controllers
         {
             //get the the teachers from the database
             var teachers = await _schoolDbContext.Teachers.ToListAsync();
-            //get the students
-            var students = await _schoolDbContext.Students.ToListAsync();
+            
             //viewmodel
             //create the teacher dropdown
             CoursesAddViewModel coursesAddViewModel = new();
-            coursesAddViewModel.Teachers = teachers.Select(t =>  new SelectListItem
-            {
-                Text = $"{t.Firstname} {t.Lastname}",
-                Value = t.Id.ToString()
-            });
+            coursesAddViewModel.Teachers = await _formHelperService.GetTeachersList();
             //create the students checkboxes
-            coursesAddViewModel.Students = students.Select(s => new CheckboxModel 
-            { 
-                Value = s.Id,
-                Text = $"{s.Firstname} {s.Lastname}"
-            }).ToList();
+            coursesAddViewModel.Students = await _formHelperService.GetStudentsCheckboxes();
             return View(coursesAddViewModel);
         }
         [HttpPost]
@@ -119,11 +114,8 @@ namespace CoreCourse.EfBasics.Web.Controllers
             {
                 //repopulate the teachers list
                 var teachers = await _schoolDbContext.Teachers.ToListAsync();
-                coursesAddViewModel.Teachers = teachers.Select(t => new SelectListItem
-                {
-                    Text = $"{t.Firstname} {t.Lastname}",
-                    Value = t.Id.ToString()
-                });
+                coursesAddViewModel.Teachers = await _formHelperService
+                    .GetTeachersList();
                 return View(coursesAddViewModel);
             }
             //store in database
