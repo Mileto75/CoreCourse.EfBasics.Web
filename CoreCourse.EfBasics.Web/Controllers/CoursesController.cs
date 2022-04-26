@@ -94,9 +94,6 @@ namespace CoreCourse.EfBasics.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Add()
         {
-            //get the the teachers from the database
-            var teachers = await _schoolDbContext.Teachers.ToListAsync();
-            
             //viewmodel
             //create the teacher dropdown
             CoursesAddViewModel coursesAddViewModel = new();
@@ -113,7 +110,6 @@ namespace CoreCourse.EfBasics.Web.Controllers
             if(!ModelState.IsValid)//validation error
             {
                 //repopulate the teachers list
-                var teachers = await _schoolDbContext.Teachers.ToListAsync();
                 coursesAddViewModel.Teachers = await _formHelperService
                     .GetTeachersList();
                 return View(coursesAddViewModel);
@@ -153,7 +149,5 @@ namespace CoreCourse.EfBasics.Web.Controllers
             //redirect to index
             return RedirectToAction("index");
         }
-
-
     }
 }
