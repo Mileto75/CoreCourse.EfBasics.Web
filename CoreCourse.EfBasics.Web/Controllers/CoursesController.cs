@@ -33,7 +33,7 @@ namespace CoreCourse.EfBasics.Web.Controllers
             //create a viewmodel
             var coursesIndexViewModel = new CoursesIndexViewModel();
             coursesIndexViewModel.Courses = courses.Select(c
-                => c.Name);
+                => new BaseViewModel {Id=c.Id,Name=c.Name });
             //fill the model
             //pass to the view
             return View(coursesIndexViewModel);

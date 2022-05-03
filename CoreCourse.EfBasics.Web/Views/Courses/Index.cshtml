@@ -6,11 +6,18 @@
         <table class="table table-responsive table-hover">
             <tr>
                 <th>Title</th>
+                <th>Action</th>
             </tr>
             @foreach (var course in Model.Courses)
             {
                 <tr>
-                    <td>@course</td>
+                    <td>@course.Name</td>
+                    <td>
+                        <a class="btn btn-outline-info"
+                           asp-controller="ShoppingCart"
+                           asp-action="Add"
+                           asp-route-id="@course.Id">Buy</a>
+                    </td>
                 </tr>
             }
         </table>
